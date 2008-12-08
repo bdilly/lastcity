@@ -1,0 +1,25 @@
+colocacao dos 6 alvos e dos canhoes
+naves atiram no proximo alvo na altitude 0
+quando termina o jogo tem que recomecar
+aparecer nome no inicio
+esperar tiro do usuario para comecar o jogo
+mostrar nivel na tela
+funcao atirar
+contagem de pontos e mudanca de nivel
+uso da bomba
+fazer as 3 naves
+fazer canhoes
+fazer alvos
+fazer chao
+som
+menu
+  pausar jogo
+  escurecer tela
+  resume ou esc
+    dar um return
+  controls
+  help
+  credits
+  quit
+    dar um sys.exit()
+gitar a parada
