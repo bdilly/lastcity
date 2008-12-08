@@ -11,7 +11,6 @@
 # ----------------------------------------------------------------------
 
 # imports
-# FIXME detectar qual o modulo deu tinga
 try:
     import pygame
     from pygame.locals import *
