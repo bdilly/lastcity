@@ -48,6 +48,9 @@ class World(object):
     def actions(self, time_passed):
         for entity in self.entities.values():
             entity.act(time_passed)
+        if self.targets_count == 0:
+            return True
+        return False
 
     def render(self, surface):
         surface.blit(self.background, (0,0))

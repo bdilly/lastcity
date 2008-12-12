@@ -67,88 +67,108 @@ def run():
     for i in range(3):
         spaceship_images.append(pygame.image.load(SPACESHIP_FILENAMES[i]).convert_alpha())
 
-    # create world
-    world = World(background_image, SCREEN_SIZE)
+    message = "LAST CITY"
 
-    # create spaceship targets
-    world.create_targets(target1_image, target2_image, city_image, shield_image)
-
-    # start clock
-    clock = pygame.time.Clock()
-
-    # initialize variables:
-    spaceship_time = 0
-    level = 0
-    spaceships = 0
-    score = 0
-    waiting_new_level = False
-    # cannon 0 is left and 1 is right
-    active_cannon = 0
-    use_bomb = False
-    shoot = False
-
-    # main game loop
     while True:
-
-        # handle input
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                return
-            elif event.type == KEYDOWN:
-                if event.key == K_ESCAPE:
-                    show_menu()
-                elif event.key == K_LEFT:
-                    active_cannon = 0
-                elif event.key == K_RIGHT:
-                    active_cannon = 1
-                elif event.key == K_UP:
-                    use_bomb = True
-                elif event.key == K_SPACE:
-                    shoot = True
-
-        # verify if it's a new level
-        if level == 0 or spaceships % (10 + level*5) == 0:
-            # verify if all spaceships were destroyed
-            busy = False
-            for alt, state in world.altitudes:
-                busy += state
-            if not busy:
-                spaceships = 0
-                waiting_new_level = False
-                world.add_target()
-                level += 1
-                #FIXME
-                print "level ", level
-            else:
-                waiting_new_level = True
-
-        # verify if a new spaceship can be created
-        if spaceship_time == 0 and not world.altitudes[world.altitude_max][1] and not waiting_new_level:
-            # select a spaceship image
-            image = random.choice(spaceship_images)
-            # select a speed
-            speed = level/10. + random.random() * level/15.
-            # select a location
-            w, h = image.get_size()
-            x = random.randint(0,1)
-            if x == 0:
-                x = -w/2 - random.randint(0, 2 *w)
-                image = pygame.transform.flip(image, 1, 0)
-            else:
-                x = w/2 + world.size[0] + random.randint(0, 2 *w)
-            location = Vector(x, world.altitudes[world.altitude_max][0])
-            # create spaceship
-            ship = SpaceShip(world, image, location, speed)
-            world.add_entity(ship)
-            world.altitudes[world.altitude_max][1] = True
-            spaceships += 1
-
-        # objects move and the screen is update
-        time_passed = clock.tick()
-        world.actions(time_passed)
+        # create world
+        world = World(background_image, SCREEN_SIZE)
+        # create spaceship targets
+        world.create_targets(target1_image, target2_image, city_image, shield_image)
         world.render(screen)
+        #FIXME
+        print message
         pygame.display.update()
-        
+
+        start = False
+        while not start:
+            # handle input
+            for event in pygame.event.get():
+                if event.type == QUIT:
+                    exit()
+                elif event.type == KEYDOWN:
+                    if event.key == K_ESCAPE:
+                        show_menu()
+                    elif event.key == K_SPACE:
+                        start = True
+
+        # start clock
+        clock = pygame.time.Clock()
+
+        # initialize variables:
+        game_over = False
+        spaceship_time = 0
+        level = 0
+        spaceships = 0
+        score = 0
+        waiting_new_level = False
+        # cannon 0 is left and 1 is right
+        active_cannon = 0
+        use_bomb = False
+        shoot = False
+
+        # main game loop
+        while not game_over:
+
+            # handle input
+            for event in pygame.event.get():
+                if event.type == QUIT:
+                    exit()
+                elif event.type == KEYDOWN:
+                    if event.key == K_ESCAPE:
+                        show_menu()
+                    elif event.key == K_LEFT:
+                        active_cannon = 0
+                    elif event.key == K_RIGHT:
+                        active_cannon = 1
+                    elif event.key == K_UP:
+                        use_bomb = True
+                    elif event.key == K_SPACE:
+                        shoot = True
+
+            # verify if it's a new level
+            if level == 0 or spaceships % (10 + level*5) == 0:
+                # verify if all spaceships were destroyed
+                busy = False
+                for alt, state in world.altitudes:
+                    busy += state
+                if not busy:
+                    spaceships = 0
+                    waiting_new_level = False
+                    world.add_target()
+                    level += 1
+                    #FIXME
+                    print "level ", level
+                else:
+                    waiting_new_level = True
+
+            # verify if a new spaceship can be created
+            if spaceship_time == 0 and not world.altitudes[world.altitude_max][1] and not waiting_new_level:
+                # select a spaceship image
+                image = random.choice(spaceship_images)
+                # select a speed
+                speed = level/10. + random.random() * level/15.
+                # select a location
+                w, h = image.get_size()
+                x = random.randint(0,1)
+                if x == 0:
+                    x = -w/2 - random.randint(0, 2 *w)
+                    image = pygame.transform.flip(image, 1, 0)
+                else:
+                    x = w/2 + world.size[0] + random.randint(0, 2 *w)
+                location = Vector(x, world.altitudes[world.altitude_max][0])
+                # create spaceship
+                ship = SpaceShip(world, image, location, speed)
+                world.add_entity(ship)
+                world.altitudes[world.altitude_max][1] = True
+                spaceships += 1
+
+            # objects move and the screen is update
+            time_passed = clock.tick()
+            game_over = world.actions(time_passed)
+            world.render(screen)
+            pygame.display.update()
+
+        message =  "Game Over"
 
 if __name__ == "__main__":
     run()
