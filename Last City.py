@@ -30,10 +30,15 @@ SCREEN_SIZE = (800, 600)
 IMAGE_DIR = "images"
 SOUND_DIR = "sounds"
 BACKGROUND_FILENAME = os.path.join(IMAGE_DIR, "background.png")
+TARGET1_FILENAME = os.path.join(IMAGE_DIR, "target1.png")
+TARGET2_FILENAME = os.path.join(IMAGE_DIR, "target2.png")
+CITY_FILENAME = os.path.join(IMAGE_DIR, "city.png")
+SHIELD_FILENAME = os.path.join(IMAGE_DIR, "shield.png")
 SPACESHIP_FILENAMES = []
 SPACESHIP_FILENAMES.append(os.path.join(IMAGE_DIR, "spaceship1.png"))
 SPACESHIP_FILENAMES.append(os.path.join(IMAGE_DIR, "spaceship2.png"))
 SPACESHIP_FILENAMES.append(os.path.join(IMAGE_DIR, "spaceship3.png"))
+
 
 
 def show_menu():
@@ -54,12 +59,19 @@ def run():
 
     #loads all images
     background_image = pygame.image.load(BACKGROUND_FILENAME).convert()
+    target1_image = pygame.image.load(TARGET1_FILENAME).convert_alpha()
+    target2_image = pygame.image.load(TARGET2_FILENAME).convert_alpha()
+    city_image = pygame.image.load(CITY_FILENAME).convert_alpha()
+    shield_image = pygame.image.load(SHIELD_FILENAME).convert_alpha()
     spaceship_images = []
     for i in range(3):
         spaceship_images.append(pygame.image.load(SPACESHIP_FILENAMES[i]).convert_alpha())
 
     # create world
     world = World(background_image, SCREEN_SIZE)
+
+    # create spaceship targets
+    world.create_targets(target1_image, target2_image, city_image, shield_image)
 
     # start clock
     clock = pygame.time.Clock()

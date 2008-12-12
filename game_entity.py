@@ -34,5 +34,4 @@ class GameEntity(object):
             self.location += path_to_destination * travel_distance
 
     def destroy(self):
-        #FIXME need to destroy the object
         self.world.remove_entity(self)
