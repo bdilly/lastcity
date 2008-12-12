@@ -18,7 +18,7 @@ try:
 except ImportError:
     print "One or more of the following modules couldn't be imported:"
     print "pygame, random, os, sys"
-    exit
+    exit()
 # other game classes
 from vector import Vector
 from game_entity import GameEntity
@@ -115,6 +115,7 @@ def run():
             if not busy:
                 spaceships = 0
                 waiting_new_level = False
+                world.add_target()
                 level += 1
                 #FIXME
                 print "level ", level

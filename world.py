@@ -55,10 +55,10 @@ class World(object):
             entity.render(surface)
 
     def create_targets(self, target1_image, target2_image, city_image, shield_image):
-        images = (target2_image, pygame.transform.flip(target2_image, 1, 0), target1_image,
-                  pygame.transform.flip(target1_image, 1, 0), shield_image, city_image)
-        locs_x = [int(x / 32. * self.size[0]) for x in [6, 26, 10, 22, 16, 16]]
-        locs_y = [int(y / 24. * self.size[1]) for y in [19, 19, 19, 19, 20, 20]]
+        images = (city_image, shield_image, pygame.transform.flip(target1_image, 1, 0),
+                  target1_image, pygame.transform.flip(target2_image, 1, 0), target2_image)
+        locs_x = [int(x / 32. * self.size[0]) for x in [16, 16, 22, 10, 26, 6]]
+        locs_y = [int(y / 24. * self.size[1]) for y in [20, 20, 19, 19, 19, 19]]
         for target_i in range(6):
             location = Vector(locs_x[target_i], locs_y[target_i])
             target = GameEntity(self, "target", images[target_i], location, 0)
@@ -75,8 +75,11 @@ class World(object):
             self.targets_count += 1
 
     def get_next_target(self):
-        return self.targets[self.targets_count-1]
+        if self.targets_count > 0:
+            return self.targets[self.targets_count-1]
+        else:
+            return None
 
     def remove_target(self, target):
         self.targets_count -= 1
-        self.targets[targets_count].destroy
+        target.destroy()

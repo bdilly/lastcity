@@ -19,6 +19,7 @@ class SpaceShip(GameEntity):
     def __init__(self, world, image, location, speed):
         GameEntity.__init__(self, world, "spaceship", image, location, speed)
         self.altitude = self.world.altitude_max
+        self.target = None
         self.set_destination()
 
     def set_destination(self):
@@ -29,16 +30,29 @@ class SpaceShip(GameEntity):
             self.destination = Vector(0 - w/2, y)
         else:
             self.destination = Vector(ww + w/2, y)
+        if self.altitude == 0:
+            self.target = self.world.get_next_target()
+            if self.target:
+                # need to destroy the next target
+                tx, ty = self.target.location
+                self.future_destination = self.destination
+                self.destination = Vector(tx, y)
 
     def act(self, time_passed):
         GameEntity.act(self, time_passed)
         if self.location == self.destination:
-            self.lower_altitude()
+            self.change_destination()
 
-    def lower_altitude(self):
+    def change_destination(self):
         if self.altitude == 0:
-            self.world.altitudes[self.altitude][1] = False
-            self.destroy()
+            if self.target:
+                # it reached the target
+                self.fire(self.target)
+                self.target = None
+                self.destination = self.future_destination
+            else:
+                self.world.altitudes[self.altitude][1] = False
+                self.destroy()
         elif not self.world.altitudes[self.altitude-1][1]:
             x, y = self.location
             self.world.altitudes[self.altitude][1] = False
@@ -49,3 +63,7 @@ class SpaceShip(GameEntity):
             # flip the image
             self.image = pygame.transform.flip(self.image, 1, 0)
 
+    def fire(self, target):
+        # FIXME
+        print "FIRE!"
+        self.world.remove_target(target)
