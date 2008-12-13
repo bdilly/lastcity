@@ -51,6 +51,17 @@ def show_menu():
                     return
 
 
+def display_text(message, screen, font, font_size, location, color):
+    text_surface = font.render(message, True, (0,0,0))
+    x = location[0] + font_size/2 - text_surface.get_width()/2
+    y = location[1] + font_size/2 - text_surface.get_height()/2
+    screen.blit(text_surface, (x, y))
+    text_surface = font.render(message, True, color)
+    x = location[0] - text_surface.get_width()/2
+    y = location[1] - text_surface.get_height()/2
+    screen.blit(text_surface, (x, y))
+    pygame.display.update()
+
 def run():
     # initializes pygame and set display
     pygame.init()
@@ -67,6 +78,14 @@ def run():
     for i in range(3):
         spaceship_images.append(pygame.image.load(SPACESHIP_FILENAMES[i]).convert_alpha())
 
+    # load font
+    # FIXME change by a font distributed with the game
+    # game_font = pygame.font.Font("game_font.ttf", 32)
+    # score_font = pygame.font.Font("game_font.ttf", 16)
+    font_size = 16
+    game_font = pygame.font.SysFont("arial", 5*font_size)
+    score_font = pygame.font.SysFont("arial", 2*font_size)
+
     message = "LAST CITY"
 
     while True:
@@ -76,8 +95,13 @@ def run():
         world.create_targets(target1_image, target2_image, city_image, shield_image)
         world.render(screen)
         #FIXME
-        print message
-        pygame.display.update()
+        # display message in the screen
+        x = world.size[0]/2
+        y = world.size[1]/3
+        display_text(message, screen, game_font, font_size, [x, y], (255, 0, 0))
+        y = world.size[1]/2
+        message = "Press 'fire' to start"
+        display_text(message, screen, score_font, font_size, [x, y], (255, 0, 0))
 
         start = False
         while not start:
