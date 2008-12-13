@@ -13,6 +13,7 @@
 import pygame
 from vector import Vector
 from game_entity import GameEntity
+from cannon import Cannon
 
 class World(object):
 
@@ -67,7 +68,7 @@ class World(object):
         images = (city_image, shield_image, pygame.transform.flip(target1_image, 1, 0),
                   target1_image, pygame.transform.flip(target2_image, 1, 0), target2_image)
         locs_x = [int(x / 32. * self.size[0]) for x in [16, 16, 22, 10, 26, 6]]
-        locs_y = [int(y / 24. * self.size[1]) for y in [20, 20, 19, 19, 19, 19]]
+        locs_y = [int(y / 24. * self.size[1]) for y in [20, 20, 20, 20, 19, 19]]
         for target_i in range(6):
             location = Vector(locs_x[target_i], locs_y[target_i])
             target = GameEntity(self, "target", images[target_i], location, 0)
@@ -111,4 +112,12 @@ class World(object):
         x = self.size[0] - 10 * self.font_size
         message = "SCORE      %08d" % self.score
         self.display_text(message, screen, self.score_font, self.font_size/2, [x, y], (0, 255, 0))
+
+    def create_cannons(self, l_cannon_image, r_cannon_image):
+        l_location = Vector( 1 / 16. * self.size[0], 19 / 24. * self.size[1])
+        r_location = Vector( 15 / 16. * self.size[0], 19 / 24. * self.size[1])
+        self.left_cannon = Cannon(self, l_cannon_image, l_location)
+        self.add_entity(self.left_cannon)
+        self.right_cannon = Cannon(self, r_cannon_image, r_location)
+        self.add_entity(self.right_cannon)
 

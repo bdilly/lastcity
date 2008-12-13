@@ -38,6 +38,7 @@ SPACESHIP_FILENAMES = []
 SPACESHIP_FILENAMES.append(os.path.join(IMAGE_DIR, "spaceship1.png"))
 SPACESHIP_FILENAMES.append(os.path.join(IMAGE_DIR, "spaceship2.png"))
 SPACESHIP_FILENAMES.append(os.path.join(IMAGE_DIR, "spaceship3.png"))
+CANNON_FILENAME = os.path.join(IMAGE_DIR, "cannon.png")
 
 
 
@@ -73,6 +74,8 @@ def run():
     target2_image = pygame.image.load(TARGET2_FILENAME).convert_alpha()
     city_image = pygame.image.load(CITY_FILENAME).convert_alpha()
     shield_image = pygame.image.load(SHIELD_FILENAME).convert_alpha()
+    l_cannon_image = pygame.image.load(CANNON_FILENAME).convert_alpha()
+    r_cannon_image = pygame.transform.flip(l_cannon_image, 1, 0)
     spaceship_images = []
     for i in range(3):
         spaceship_images.append(pygame.image.load(SPACESHIP_FILENAMES[i]).convert_alpha())
@@ -94,6 +97,7 @@ def run():
         world = World(background_image, SCREEN_SIZE, font_size, game_font, score_font, hi_score)
         # create spaceship targets
         world.create_targets(target1_image, target2_image, city_image, shield_image)
+        world.create_cannons(l_cannon_image, r_cannon_image)
         world.render(screen)
         # display message in the screen
         x = world.size[0]/2

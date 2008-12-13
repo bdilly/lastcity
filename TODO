@@ -1,5 +1,3 @@
-colocacao dos canhoes
-mostrar nivel na tela
 funcao atirar
 contagem de pontos
 uso da bomba
@@ -10,7 +8,6 @@ fazer chao
 fazer animacao de naves atirando no alvo 
 som
 menu
-  pausar jogo
   escurecer tela
   resume ou esc
     dar um return
