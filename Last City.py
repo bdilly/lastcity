@@ -51,26 +51,6 @@ def show_menu():
                     return
 
 
-def display_text(message, screen, font, font_size, location, color):
-    text_surface = font.render(message, True, (0,0,0))
-    x = location[0] + font_size/2 - text_surface.get_width()/2
-    y = location[1] + font_size/2 - text_surface.get_height()/2
-    screen.blit(text_surface, (x, y))
-    text_surface = font.render(message, True, color)
-    x = location[0] - text_surface.get_width()/2
-    y = location[1] - text_surface.get_height()/2
-    screen.blit(text_surface, (x, y))
-
-def display_score(hi_score, score, screen, size, font, font_size):
-    y = size[1] - 1.5 * font_size
-    x = 10 * font_size
-    message = "HI-SCORE   %08d" % hi_score
-    display_text(message, screen, font, font_size/2, [x, y], (0, 255, 0))
-    x = size[0] - 10 * font_size
-    message = "SCORE      %08d" % score
-    display_text(message, screen, font, font_size/2, [x, y], (0, 255, 0))
-
-
 def run():
     # initializes pygame and set display
     pygame.init()
@@ -97,24 +77,21 @@ def run():
 
     # initialize some variables
     message = "LAST CITY"
-    score = 0
     hi_score = 0
 
     while True:
         # create world
-        world = World(background_image, SCREEN_SIZE)
+        world = World(background_image, SCREEN_SIZE, font_size, game_font, score_font, hi_score)
         # create spaceship targets
         world.create_targets(target1_image, target2_image, city_image, shield_image)
         world.render(screen)
         # display message in the screen
         x = world.size[0]/2
         y = world.size[1]/3
-        display_text(message, screen, game_font, font_size, [x, y], (255, 0, 0))
+        world.display_text(message, screen, game_font, font_size, [x, y], (255, 0, 0))
         y = world.size[1]/2
         message = "Press 'fire' to start"
-        display_text(message, screen, score_font, font_size, [x, y], (255, 0, 0))
-        # display scores
-        display_score(hi_score, score, screen, world.size, score_font, font_size)
+        world.display_text(message, screen, score_font, font_size, [x, y], (255, 0, 0))
         # update the display
         pygame.display.update()
 
@@ -138,7 +115,6 @@ def run():
         spaceship_time = 0
         level = 0
         spaceships = 0
-        score = 0
         waiting_new_level = False
         # cannon 0 is left and 1 is right
         active_cannon = 0
@@ -175,8 +151,15 @@ def run():
                     waiting_new_level = False
                     world.add_target()
                     level += 1
+                    world.render(screen)
+                    message = "Level %02d" % level
+                    x = world.size[0]/2
+                    y = world.size[1]/2
+                    world.display_text(message, screen, game_font, font_size, [x, y], (0, 255, 0))
+                    # update the display
+                    pygame.display.update()
                     #FIXME
-                    print "level ", level
+                    pygame.time.wait(1000)
                 else:
                     waiting_new_level = True
 
@@ -205,7 +188,6 @@ def run():
             time_passed = clock.tick()
             game_over = world.actions(time_passed)
             world.render(screen)
-            display_score(hi_score, score, screen, world.size, score_font, font_size)
             pygame.display.update()
 
         message =  "Game Over"

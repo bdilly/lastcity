@@ -16,7 +16,7 @@ from game_entity import GameEntity
 
 class World(object):
 
-    def __init__(self, image, screen_size):
+    def __init__(self, image, screen_size, font_size, game_font, score_font, hi_score):
         self.entities = {}
         self.entity_id = 0
         self.targets = []
@@ -30,6 +30,11 @@ class World(object):
         distance = wh/6
         for alt in range(self.altitude_max+1):
             self.altitudes.append([wh - (distance * (alt+2) + distance / 2), False])
+        self.hi_score = hi_score
+        self.score = 0
+        self.font_size = font_size
+        self.game_font = game_font
+        self.score_font = score_font
 
     def add_entity(self, entity):
         self.entities[self.entity_id] = entity
@@ -56,6 +61,7 @@ class World(object):
         surface.blit(self.background, (0,0))
         for entity in self.entities.values():
             entity.render(surface)
+        self.display_score(surface)
 
     def create_targets(self, target1_image, target2_image, city_image, shield_image):
         images = (city_image, shield_image, pygame.transform.flip(target1_image, 1, 0),
@@ -86,3 +92,23 @@ class World(object):
     def remove_target(self, target):
         self.targets_count -= 1
         target.destroy()
+
+    def display_text(self, message, screen, font, font_size, location, color):
+        text_surface = font.render(message, True, (0,0,0))
+        x = location[0] + font_size/2 - text_surface.get_width()/2
+        y = location[1] + font_size/2 - text_surface.get_height()/2
+        screen.blit(text_surface, (x, y))
+        text_surface = font.render(message, True, color)
+        x = location[0] - text_surface.get_width()/2
+        y = location[1] - text_surface.get_height()/2
+        screen.blit(text_surface, (x, y))
+
+    def display_score(self, screen):
+        y = self.size[1] - 1.5 * self.font_size
+        x = 10 * self.font_size
+        message = "HI-SCORE   %08d" % self.hi_score
+        self.display_text(message, screen, self.score_font, self.font_size/2, [x, y], (0, 255, 0))
+        x = self.size[0] - 10 * self.font_size
+        message = "SCORE      %08d" % self.score
+        self.display_text(message, screen, self.score_font, self.font_size/2, [x, y], (0, 255, 0))
+

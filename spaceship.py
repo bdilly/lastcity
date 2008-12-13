@@ -65,5 +65,4 @@ class SpaceShip(GameEntity):
 
     def fire(self, target):
         # FIXME
-        print "FIRE!"
         self.world.remove_target(target)
