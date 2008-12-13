@@ -60,7 +60,16 @@ def display_text(message, screen, font, font_size, location, color):
     x = location[0] - text_surface.get_width()/2
     y = location[1] - text_surface.get_height()/2
     screen.blit(text_surface, (x, y))
-    pygame.display.update()
+
+def display_score(hi_score, score, screen, size, font, font_size):
+    y = size[1] - 1.5 * font_size
+    x = 10 * font_size
+    message = "HI-SCORE   %08d" % hi_score
+    display_text(message, screen, font, font_size/2, [x, y], (0, 255, 0))
+    x = size[0] - 10 * font_size
+    message = "SCORE      %08d" % score
+    display_text(message, screen, font, font_size/2, [x, y], (0, 255, 0))
+
 
 def run():
     # initializes pygame and set display
@@ -86,7 +95,10 @@ def run():
     game_font = pygame.font.SysFont("arial", 5*font_size)
     score_font = pygame.font.SysFont("arial", 2*font_size)
 
+    # initialize some variables
     message = "LAST CITY"
+    score = 0
+    hi_score = 0
 
     while True:
         # create world
@@ -94,7 +106,6 @@ def run():
         # create spaceship targets
         world.create_targets(target1_image, target2_image, city_image, shield_image)
         world.render(screen)
-        #FIXME
         # display message in the screen
         x = world.size[0]/2
         y = world.size[1]/3
@@ -102,6 +113,10 @@ def run():
         y = world.size[1]/2
         message = "Press 'fire' to start"
         display_text(message, screen, score_font, font_size, [x, y], (255, 0, 0))
+        # display scores
+        display_score(hi_score, score, screen, world.size, score_font, font_size)
+        # update the display
+        pygame.display.update()
 
         start = False
         while not start:
@@ -190,6 +205,7 @@ def run():
             time_passed = clock.tick()
             game_over = world.actions(time_passed)
             world.render(screen)
+            display_score(hi_score, score, screen, world.size, score_font, font_size)
             pygame.display.update()
 
         message =  "Game Over"
