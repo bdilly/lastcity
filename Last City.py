@@ -50,6 +50,16 @@ def show_menu():
                 if event.key == K_ESCAPE:
                     return
 
+def pause():
+    while True:
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                sys.exit()
+            elif event.type == KEYDOWN:
+                if event.key == K_ESCAPE:
+                    show_menu()
+                if event.key == K_p or event.key == K_PAUSE:
+                    return
 
 def run():
     # initializes pygame and set display
@@ -131,6 +141,10 @@ def run():
                 elif event.type == KEYDOWN:
                     if event.key == K_ESCAPE:
                         show_menu()
+                        clock.tick()
+                    if event.key == K_p or event.key == K_PAUSE:
+                        pause()
+                        clock.tick()
                     elif event.key == K_LEFT:
                         active_cannon = 0
                     elif event.key == K_RIGHT:
