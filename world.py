@@ -17,12 +17,13 @@ from cannon import Cannon
 
 class World(object):
 
-    def __init__(self, image, screen_size, font_size, game_font, score_font, hi_score):
+    def __init__(self, image, bullet_image, screen_size, font_size, game_font, score_font, hi_score):
         self.entities = {}
         self.entity_id = 0
         self.targets = []
         self.targets_count = 0
         self.background = image
+        self.bullet_image = bullet_image
         self.size = screen_size
         # spaceships can fly in 4 different altitudes
         self.altitude_max = 3
@@ -51,9 +52,14 @@ class World(object):
         else:
             return None
 
-    def actions(self, time_passed):
+    def actions(self, time_passed, use_bomb, active_cannon, shoot):
         for entity in self.entities.values():
             entity.act(time_passed)
+        if shoot:
+            if active_cannon == 0:
+                self.left_cannon.fire()
+            else:
+                self.right_cannon.fire()
         if self.targets_count == 0:
             return True
         return False

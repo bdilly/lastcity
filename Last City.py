@@ -34,6 +34,7 @@ TARGET1_FILENAME = os.path.join(IMAGE_DIR, "target1.png")
 TARGET2_FILENAME = os.path.join(IMAGE_DIR, "target2.png")
 CITY_FILENAME = os.path.join(IMAGE_DIR, "city.png")
 SHIELD_FILENAME = os.path.join(IMAGE_DIR, "shield.png")
+BULLET_FILENAME = os.path.join(IMAGE_DIR, "bullet.png")
 SPACESHIP_FILENAMES = []
 SPACESHIP_FILENAMES.append(os.path.join(IMAGE_DIR, "spaceship1.png"))
 SPACESHIP_FILENAMES.append(os.path.join(IMAGE_DIR, "spaceship2.png"))
@@ -76,6 +77,7 @@ def run():
     shield_image = pygame.image.load(SHIELD_FILENAME).convert_alpha()
     l_cannon_image = pygame.image.load(CANNON_FILENAME).convert_alpha()
     r_cannon_image = pygame.transform.flip(l_cannon_image, 1, 0)
+    bullet_image = pygame.image.load(BULLET_FILENAME).convert_alpha()
     spaceship_images = []
     for i in range(3):
         spaceship_images.append(pygame.image.load(SPACESHIP_FILENAMES[i]).convert_alpha())
@@ -94,7 +96,8 @@ def run():
 
     while True:
         # create world
-        world = World(background_image, SCREEN_SIZE, font_size, game_font, score_font, hi_score)
+        world = World(background_image, bullet_image, SCREEN_SIZE,
+                      font_size, game_font, score_font, hi_score)
         # create spaceship targets
         world.create_targets(target1_image, target2_image, city_image, shield_image)
         world.create_cannons(l_cannon_image, r_cannon_image)
@@ -114,7 +117,7 @@ def run():
             # handle input
             for event in pygame.event.get():
                 if event.type == QUIT:
-                    exit()
+                    sys.exit()
                 elif event.type == KEYDOWN:
                     if event.key == K_ESCAPE:
                         show_menu()
@@ -132,6 +135,7 @@ def run():
         waiting_new_level = False
         # cannon 0 is left and 1 is right
         active_cannon = 0
+        enabled_bomb = True
         use_bomb = False
         shoot = False
 
@@ -141,7 +145,7 @@ def run():
             # handle input
             for event in pygame.event.get():
                 if event.type == QUIT:
-                    exit()
+                    sys.exit()
                 elif event.type == KEYDOWN:
                     if event.key == K_ESCAPE:
                         show_menu()
@@ -154,7 +158,9 @@ def run():
                     elif event.key == K_RIGHT:
                         active_cannon = 1
                     elif event.key == K_UP:
-                        use_bomb = True
+                        if enabled_bomb:
+                            use_bomb = True
+                            enabled_bomb = False
                     elif event.key == K_SPACE:
                         shoot = True
 
@@ -169,6 +175,7 @@ def run():
                     waiting_new_level = False
                     world.add_target()
                     level += 1
+                    enabled_bomb = True
                     world.render(screen)
                     message = "Level %02d" % level
                     x = world.size[0]/2
@@ -177,7 +184,7 @@ def run():
                     # update the display
                     pygame.display.update()
                     #FIXME
-                    pygame.time.wait(1000)
+                    pygame.time.wait(1500)
                 else:
                     waiting_new_level = True
 
@@ -204,11 +211,16 @@ def run():
 
             # objects move and the screen is update
             time_passed = clock.tick()
-            game_over = world.actions(time_passed)
+            game_over = world.actions(time_passed, use_bomb, active_cannon, shoot)
+            use_bomb = False
+            shoot = False
             world.render(screen)
             pygame.display.update()
 
         message =  "Game Over"
+        if world.score > hi_score:
+            hi_score = world.score
+
 
 if __name__ == "__main__":
     run()

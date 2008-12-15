@@ -12,8 +12,10 @@
 
 import pygame
 from game_entity import GameEntity
+from vector import Vector
+from bullet import Bullet
 
-MAX_COOLDOWN = 400
+MAX_COOLDOWN = 800
 
 class Cannon(GameEntity):
     def __init__(self, world, image, location):
@@ -25,8 +27,19 @@ class Cannon(GameEntity):
         if self.cooldown >= MAX_COOLDOWN:
             self.cooldown = MAX_COOLDOWN
 
-    def fire(self, target):
-        if MAX_COOLDOWN > 0:
-            #FIXME
-            print "FIRE!"
-            self.cooldown -= MAX_COOLDOWN/4
+    def fire(self):
+        if self.cooldown > 0:
+            self.cooldown -= MAX_COOLDOWN * 1.2
+            x, y = self.location
+            w, h = self.image.get_size()
+            if x < self.world.size[0]/2:
+                # left cannon fire
+                bullet_location = Vector(x+w/2, y-h/2)
+            else:
+                # right cannon fire
+                bullet_location = Vector(x-w/2, y-h/2)
+            bullet_destination = Vector(self.world.size[0] - x -w/2, 0)
+            bullet = Bullet(self.world, self.world.bullet_image,
+                                bullet_location, bullet_destination)
+            self.world.add_entity(bullet)
+
