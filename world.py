@@ -139,5 +139,8 @@ class World(object):
                     by < sy + sh/2 + bh/2 and 
                     by > sy - sh/2 - bh/2):
                     # colision detected
+                    # score incremented
+                    self.score += int(100*entity.speed)
                     bullet.destroy()
                     entity.destroy()
+
