@@ -60,6 +60,8 @@ class World(object):
                 self.left_cannon.fire()
             else:
                 self.right_cannon.fire()
+        if use_bomb:
+            self.destroy_spaceships()
         if self.targets_count == 0:
             return True
         return False
@@ -140,7 +142,16 @@ class World(object):
                     by > sy - sh/2 - bh/2):
                     # colision detected
                     # score incremented
-                    self.score += int(100*entity.speed)
+                    self.inc_score(entity)
                     bullet.destroy()
                     entity.destroy()
 
+    def destroy_spaceships(self):
+        for entity in self.entities.values():
+            if entity.kind == "spaceship":
+                # score incremented
+                self.inc_score(entity)
+                entity.destroy()
+
+    def inc_score(self, entity):
+        self.score += int(100*entity.speed)
