@@ -127,3 +127,17 @@ class World(object):
         self.right_cannon = Cannon(self, r_cannon_image, r_location)
         self.add_entity(self.right_cannon)
 
+    def test_colision(self, bullet):
+        for entity in self.entities.values():
+            if entity.kind == "spaceship":
+                bx, by = bullet.location
+                bw, bh = bullet.image.get_size()
+                sx, sy = entity.location
+                sw, sh = entity.image.get_size()
+                if (bx < sx + sw/2 + bw/2 and 
+                    bx > sx - sw/2 - bw/2 and 
+                    by < sy + sh/2 + bh/2 and 
+                    by > sy - sh/2 - bh/2):
+                    # colision detected
+                    bullet.destroy()
+                    entity.destroy()

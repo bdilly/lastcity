@@ -51,7 +51,6 @@ class SpaceShip(GameEntity):
                 self.target = None
                 self.destination = self.future_destination
             else:
-                self.world.altitudes[self.altitude][1] = False
                 self.destroy()
         elif not self.world.altitudes[self.altitude-1][1]:
             x, y = self.location
@@ -66,3 +65,7 @@ class SpaceShip(GameEntity):
     def fire(self, target):
         # FIXME
         self.world.remove_target(target)
+
+    def destroy(self):
+        self.world.altitudes[self.altitude][1] = False
+        GameEntity.destroy(self)

@@ -14,7 +14,7 @@ import pygame
 from game_entity import GameEntity
 from vector import Vector
 
-BULLET_SPEED = 0.3
+BULLET_SPEED = 0.5
 
 class Bullet(GameEntity):
     def __init__(self, world, image, location, destination):
@@ -25,4 +25,5 @@ class Bullet(GameEntity):
         GameEntity.act(self, time_passed)
         if self.location == self.destination:
             self.destroy()
+        self.world.test_colision(self)
 
