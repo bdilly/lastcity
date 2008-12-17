@@ -5,11 +5,3 @@ fazer chao
 fazer animacao de naves atirando no alvo 
 som
 menu
-  escurecer tela
-  resume ou esc
-    dar um return
-  controls
-  help
-  credits
-  quit
-    dar um sys.exit()

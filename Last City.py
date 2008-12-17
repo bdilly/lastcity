@@ -43,14 +43,76 @@ CANNON_FILENAME = os.path.join(IMAGE_DIR, "cannon.png")
 
 
 
-def show_menu():
+def show_menu(screen, font, font_size):
+    dark = screen.convert()
+    before_dark = dark.copy()
+    dark.fill([0,0,0])
+    dark.set_alpha(90)
+    #make current screen darker
+    screen.blit(dark,[0,0])
+    pygame.display.update()
+
+    menu = 0
+    active_option = 0
+
+    messages = [["RESUME", "CONTROLS", "HELP", "CREDITS", "QUIT"],
+                ["SELECT LEFT CANNON", "SELECT RIGHT CANNON", "FIRE", "USE BOMB"]]
+
     while True:
+        max_option = len(messages[menu])
+        # handle input
         for event in pygame.event.get():
             if event.type == QUIT:
                 sys.exit()
             elif event.type == KEYDOWN:
                 if event.key == K_ESCAPE:
-                    return
+                    if menu == 0:
+                        # resume
+                        screen.blit(before_dark,[0,0])
+                        pygame.display.update()
+                        return
+                    else:
+                        menu = 0
+                        active_option = 0
+                elif event.key == K_UP:
+                    active_option -= 1
+                elif event.key == K_DOWN:
+                    active_option += 1
+                elif event.key == K_RETURN:
+                    if menu == 0 and active_option == 0:
+                        # resume
+                        screen.blit(before_dark,[0,0])
+                        pygame.display.update()
+                        return
+                    elif menu == 0 and active_option == 4:
+                        # quit
+                        sys.exit()
+                    elif menu == 0:
+                        menu = active_option
+                        active_option = 0
+
+        if active_option < 0:
+            active_option = max_option - 1
+        elif active_option == max_option:
+            active_option = 0
+
+        # create messages to be displayed
+        disp_messages = messages[menu][:]
+        disp_messages[active_option] = "> " + disp_messages[active_option] + " <"
+
+        # show the menu
+        screen.blit(before_dark,[0,0])
+        screen.blit(dark,[0,0])
+        w, h = screen.get_size()
+        gap = h/(len(disp_messages)+2)
+        y = 0
+        for message in disp_messages:
+            y = y + gap
+            text_surface = font.render(message, True, (255,255,255))
+            tw, th = text_surface.get_size()
+            screen.blit(text_surface, (w/2 - tw/2, y))
+        pygame.display.update()
+
 
 def pause():
     while True:
@@ -58,10 +120,9 @@ def pause():
             if event.type == QUIT:
                 sys.exit()
             elif event.type == KEYDOWN:
-                if event.key == K_ESCAPE:
-                    show_menu()
                 if event.key == K_p or event.key == K_PAUSE:
                     return
+
 
 def run():
     # initializes pygame and set display
@@ -120,7 +181,7 @@ def run():
                     sys.exit()
                 elif event.type == KEYDOWN:
                     if event.key == K_ESCAPE:
-                        show_menu()
+                        show_menu(screen, game_font, font_size)
                     elif event.key == K_SPACE:
                         start = True
 
@@ -148,7 +209,7 @@ def run():
                     sys.exit()
                 elif event.type == KEYDOWN:
                     if event.key == K_ESCAPE:
-                        show_menu()
+                        show_menu(screen, game_font, font_size)
                         clock.tick()
                     if event.key == K_p or event.key == K_PAUSE:
                         pause()
