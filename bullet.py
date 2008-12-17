@@ -25,5 +25,6 @@ class Bullet(GameEntity):
         GameEntity.act(self, time_passed)
         if self.location == self.destination:
             self.destroy()
+            return
         self.world.test_colision(self)
 
